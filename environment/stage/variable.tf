@@ -46,6 +46,23 @@ variable "jenkins_port" {
 
 }
 
+# http port
+variable "http_port" {
+  default = 80
+
+}
+
+# MySql Port
+variable "mysql_port" {
+  default = "3306"
+}
+
+# Jenkins proxy port
+variable "proxy_port" {
+    default = 8080
+
+}
+
 # keypair variable
 variable "keypair" {
   default = ""

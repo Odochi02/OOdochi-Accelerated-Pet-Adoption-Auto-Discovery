@@ -22,3 +22,19 @@ variable "sonarqube_port" {
 variable "jenkins_port" {
 
 }
+
+# http port
+variable "http_port" {
+
+}
+
+# proxy port
+variable "proxy_port" {
+
+}
+
+
+/*# mysql port
+variable "mysql_port" {
+
+}*/

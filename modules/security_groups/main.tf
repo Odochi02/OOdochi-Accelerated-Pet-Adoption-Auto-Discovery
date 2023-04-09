@@ -80,31 +80,23 @@ ingress {
     from_port        = var.ssh_port
     to_port          = var.ssh_port
     protocol         = "tcp"
-    security_groups = [aws_security_group.OAPAAD_bastion_sg.id]
+    cidr_blocks = [var.all_ip]
 }
    
-  ingress {
-    description      = "SSH"
-    from_port        = var.ssh_port
-    to_port          = var.ssh_port
-    protocol         = "tcp"
-    security_groups = [aws_security_group.OAPAAD_ansible_sg.id]
+ ingress {
+    description = "docker"
+    from_port   = var.proxy_port
+    to_port     = var.proxy_port
+    protocol    = "tcp"
+    cidr_blocks = [var.all_ip]
   }
 
   ingress {
-    description      = "HTTPS"
-    from_port        = 443
-    to_port          = 443
-    protocol         = "tcp"
-    security_groups = [aws_security_group.OAPAAD_docker_prod_lb_sg.id]
-    }
-
-  ingress {
-    description      = "APPLICATION"
-    from_port        = 8080
-    to_port          = 8080
-    protocol         = "tcp"
-    security_groups = [aws_security_group.OAPAAD_docker_prod_lb_sg.id]
+    description = "HTTP"
+    from_port   = var.http_port
+    to_port     = var.http_port
+    protocol    = "tcp"
+    cidr_blocks = [var.all_ip]
   }
 
   egress {
@@ -125,54 +117,32 @@ resource "aws_security_group" "OAPAAD_docker-stage_sg" {
   description = "Allow inbound traffic"
   vpc_id      = var.vpc_id
 
+
   
 ingress {
     description      = "SSH"
     from_port        = var.ssh_port
     to_port          = var.ssh_port
     protocol         = "tcp"
-    security_groups = [aws_security_group.OAPAAD_bastion_sg.id]
+    cidr_blocks = [var.all_ip]
 }
    
   ingress {
-    description      = "SSH"
-    from_port        = var.ssh_port
-    to_port          = var.ssh_port
-    protocol         = "tcp"
-    security_groups = [aws_security_group.OAPAAD_ansible_sg.id]
+    description = "docker"
+    from_port   = var.proxy_port
+    to_port     = var.proxy_port
+    protocol    = "tcp"
+    cidr_blocks = [var.all_ip]
   }
 
   ingress {
     description      = "HTTP"
-    from_port        = 80
-    to_port          = 80
+    from_port        = var.http_port
+    to_port          = var.http_port
     protocol         = "tcp"
-    security_groups = [aws_security_group.OAPAAD_docker_prod_lb_sg.id]
+    cidr_blocks = [var.all_ip]
   }
 
-ingress {
-    description      = "APPLICATION"
-    from_port        = 8080
-    to_port          = 8080
-    protocol         = "tcp"
-    security_groups = [aws_security_group.OAPAAD_docker_stage_lb_sg.id]
-}
-
-ingress {
-    description      = "HTTP"
-    from_port        = 80
-    to_port          = 80
-    protocol         = "tcp"
-    security_groups = [aws_security_group.OAPAAD_docker_stage_lb_sg.id]
-}
-
-ingress {
-    description      = "APPLICATION"
-    from_port        = 8085
-    to_port          = 8085
-    protocol         = "tcp"
-    security_groups = [aws_security_group.OAPAAD_docker_stage_lb_sg.id]
-}
   egress {
     from_port        = 0
     to_port          = 0
@@ -183,7 +153,8 @@ ingress {
   tags = {
     Name = "OAPAAD_docker-stage_sg"
   }
-}
+  }
+
 
 # Create Security Group for Bastion Host 
 resource "aws_security_group" "OAPAAD_bastion_sg" {
@@ -267,6 +238,14 @@ resource "aws_security_group" "OAPAAD_jenkins_sg" {
     cidr_blocks = [var.all_ip]
   }
 
+  ingress {
+    description = "Allow http traffic"
+    from_port   = var.http_port
+    to_port     = var.http_port
+    protocol    = "tcp"
+    cidr_blocks = [var.all_ip]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -344,5 +323,29 @@ resource "aws_security_group" "OAPAAD_docker_prod_lb_sg" {
   }
 }
 
+# Security group for RDS
+/*resource "aws_security_group" "OAPAAD_rds_sg" {
+  name        = "OAPAAD_rds_sg"
+  description = "Allow traffic for mysql"
+  vpc_id      = var.vpc_id
 
+  ingress {
+    description = "Allow mysql traffic"
+    from_port   = var.mysql_port
+    to_port     = var.mysql_port
+    protocol    = "tcp"
+    cidr_blocks = ["${var.aws_OAPAAD_pub_sn1}", "${var.OAPAAD_pub_sn2}"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = [var.all_ip]
+  }
+
+  tags = {
+    Name = "OAPAAD_mysql_sg"
+  }
+}*/
 
